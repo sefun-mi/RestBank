@@ -1,5 +1,6 @@
 package com.RestBank.modules.operations.controller;
 
+import com.RestBank.modules.common.idempotency.Idempotent;
 import com.RestBank.modules.common.response.WebResponseBuilder;
 import com.RestBank.modules.operations.api.CreateAccountRequest;
 import com.RestBank.modules.operations.api.DepositRequest;

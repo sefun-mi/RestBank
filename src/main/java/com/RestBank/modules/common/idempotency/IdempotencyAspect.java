@@ -1,4 +1,4 @@
-package com.assessment.api_design.common.idempotency;
+package com.RestBank.modules.common.idempotency;
 
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;

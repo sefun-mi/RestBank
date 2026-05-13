@@ -1,4 +1,4 @@
-package com.assessment.api_design.common.idempotency;
+package com.RestBank.modules.common.idempotency;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
