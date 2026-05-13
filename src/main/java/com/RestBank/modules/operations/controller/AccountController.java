@@ -16,18 +16,21 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
     private final AccountService accountService;
 
+    @Idempotent
     @PostMapping("/create_account")
     public ResponseEntity<Object> createAccount(@Valid @RequestBody CreateAccountRequest createAccountRequest){
 
         return WebResponseBuilder.buildSuccessResponse(accountService.createAccount(createAccountRequest));
     }
 
+    @Idempotent
     @PostMapping("/deposit")
     public ResponseEntity<Object> deposit(@Valid @RequestBody DepositRequest depositRequest){
         accountService.deposit(depositRequest);
         return WebResponseBuilder.buildSuccessResponse(null);
     }
 
+    @Idempotent
     @PostMapping("/withdrawal")
     public ResponseEntity<Object> withdraw(@Valid @RequestBody WithdrawalRequest withdrawalRequest){
         accountService.withdraw(withdrawalRequest);
