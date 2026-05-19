@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WebResponse {
+public class WebResponseBody {
     private String responseCode;
     private boolean success;
     private String message;

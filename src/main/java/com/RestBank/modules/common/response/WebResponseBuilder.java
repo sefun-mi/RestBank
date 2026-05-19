@@ -5,18 +5,18 @@ import org.springframework.http.ResponseEntity;
 
 public class WebResponseBuilder {
     public static ResponseEntity<Object> buildSuccessResponse(Object data){
-        WebResponse webResponse = new WebResponse("00",true,"Successful",data);
-        return ResponseEntity.ok(webResponse);
+        WebResponseBody webResponseBody = new WebResponseBody("00",true,"Successful",data);
+        return ResponseEntity.ok(webResponseBody);
     }
 
     public static ResponseEntity<Object> buildFailureResponse(String message, HttpStatusCode httpStatusCode){
-        WebResponse webResponse = new WebResponse("06",false, message,null);
-        return new ResponseEntity<>(webResponse,httpStatusCode);
+        WebResponseBody webResponseBody = new WebResponseBody("06",false, message,null);
+        return new ResponseEntity<>(webResponseBody,httpStatusCode);
     }
 
     public static ResponseEntity<Object> buildResponse(String message, boolean success,Object data, HttpStatusCode httpStatusCode){
         String responseCode = success ? "00" : "06";
-        WebResponse webResponse = new WebResponse(responseCode, success, message, data);
-        return new ResponseEntity<>(webResponse,httpStatusCode);
+        WebResponseBody webResponseBody = new WebResponseBody(responseCode, success, message, data);
+        return new ResponseEntity<>(webResponseBody,httpStatusCode);
     }
 }

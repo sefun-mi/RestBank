@@ -25,6 +25,7 @@ public class JwtSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/login", "/create_account",
+                                "/actuator/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html").permitAll()

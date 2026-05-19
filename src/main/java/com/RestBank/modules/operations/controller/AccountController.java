@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
     private final AccountService accountService;
 
-    @Idempotent
+    @Idempotent // on controller instead of service so if I'm wrangling a response I can decide header, httpCode etc
     @PostMapping("/create_account")
     public ResponseEntity<Object> createAccount(@Valid @RequestBody CreateAccountRequest createAccountRequest){
 

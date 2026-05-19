@@ -1,5 +1,6 @@
 package com.RestBank.modules.common.idempotency;
 
+import com.RestBank.modules.common.response.WebResponseBuilder;
 import com.RestBank.modules.common.util.RequestLocalUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -9,13 +10,13 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.HexFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +31,6 @@ public class IdempotencyAspect {
 
     @Around("@annotation(Idempotent)")
     public Object beforeMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        System.out.println("Checking idempotency before execution...");
 
         Object[] args = proceedingJoinPoint.getArgs();
         if(args == null || args.length == 0){
@@ -43,14 +43,26 @@ public class IdempotencyAspect {
             String cached = redisTemplate.opsForValue().get(requestHash + "-result");
 
             if (cached != null) {
-                return objectMapper.readValue(cached, Object.class);
+                Object prevResponseObj = objectMapper.readValue(cached, Object.class);
+                log.info("duplicate request, returning original response");
+                return ResponseEntity.ok(prevResponseObj); //restricts to ok 200 todo fix for 201, 3xx etc
             }
-            return null;
+            return WebResponseBuilder.buildResponse("Duplicate action, your original request does not produce a response or may have encountered an error, kindly confirm the effects before re-attempting", true, null, HttpStatus.CONFLICT);
+
         }
 
         Object result = proceedingJoinPoint.proceed();
+        if (result instanceof ResponseEntity<?> responseEntity) {
 
-        redisTemplate.opsForValue().set(requestHash + "-result", objectMapper.writeValueAsString(result), Duration.of(4, ChronoUnit.MINUTES));
+            String body = objectMapper.writeValueAsString(responseEntity.getBody());
+
+            redisTemplate.opsForValue().set(
+                    requestHash + "-result",
+                    body,
+                    Duration.ofMinutes(4)
+            );
+        }
+
         return result;
     }
 
