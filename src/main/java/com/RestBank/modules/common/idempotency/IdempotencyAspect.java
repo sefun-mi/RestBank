@@ -76,7 +76,8 @@ public class IdempotencyAspect {
 
             return RequestLocalUtil.getLoggedInSubject() + HexFormat.of().formatHex(hashBytes);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unable to evaluate if action is a repetition");
+            log.info("error during idempotency hashing: {}", e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "system error, kindly reach out to support");
         }
     }
 
@@ -117,8 +118,8 @@ public class IdempotencyAspect {
 
             return true;
         } catch (Exception e) {
-            log.error("unable to validate request non-redundancy with cause, {}", e.getMessage());
-            return false;
+            log.info("unable to validate request non-redundancy with cause: {}", e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "system error, kindly reach out to support");
         }
     }
 }
